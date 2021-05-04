@@ -1,0 +1,68 @@
+---
+title: "Reef clustering - Post processing"
+output: pdf_document
+---
+
+This document shows how to post-process the Dirichlet mixture MCMC chains using the functions in \verb|chain_processing.R|. Our first chunck of code checks if the required libraries are available, installing them if necessary. Afterwards, function in \verb|chain_processing.R| are loaded.
+
+```{r, warning=FALSE, message=FALSE}
+packages <- c("ggplot2", "dplyr", "data.table", "reticulate", 
+              "label.switching", "abind", "tidyr", 'plyr')
+
+for(p in packages){
+  if(!require(p,character.only = TRUE)) install.packages(p)
+  library(p,character.only = TRUE)
+}
+
+source('chain_processing.R')
+```
+
+After ensuring that the MCMC file is in our working directory, we can use \verb|read_mcmc_file| to read it into R.
+
+```{r, eval=FALSE}
+filename= "MCMC_example.p"
+results = read_mcmc_file(filename)
+```
+
+Label switching is dealt with by using \verb|relabel_mcmc| which applies Stephen's relabelling algorithm, requiring the package \verb|label.switching|. This returns a list with relabelled $\boldsymbol{\underline{\rho}}$ and $\boldsymbol{z}$ parameters.
+
+```{r, echo=FALSE}
+load("output_example")
+```
+
+```{r, eval = FALSE}
+results_relab = relabel_mcmc(results)
+```
+
+We can now obtain summaries of interest of the parameters and latent variables posterior distributions. The following chunck of code gathers the 5%, 50% and 95% quantiles of the $\boldsymbol{\underline{\rho}}$ elements.
+
+```{r, message=FALSE, warning=FALSE}
+results_relab$rho %>%
+  group_by(group, prop) %>%
+  dplyr::summarise( Q5 = quantile(rho, probs = 0.05),
+                    median = median(rho, na.rm = T),
+                    Q95 = quantile(rho, probs = 0.95))
+```
+
+An auxiliary function \verb|plot_rho_posterior| is also available to easily obtain trace and density plots. 
+
+```{r, fig.width=8, fig.height=5, fig.align='center'}
+rho_plots = plot_rho_posterior(results_relab)
+rho_plots$trace
+```
+
+```{r, fig.width=8, fig.height=5, fig.align='center'}
+rho_plots$density
+```
+
+Finally, we can summarise the cluster allocation of the observations with \verb|summary_z|. This function returns the posterior cluster allocation probability for each observation in the sample as well as the mode partition.
+
+```{r}
+z_post = summary_z(results_relab$z, k= 2)
+head(z_post$probability)
+
+z_post$mode
+```
+
+
+
