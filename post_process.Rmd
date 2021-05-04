@@ -20,15 +20,11 @@ source('chain_processing.R')
 After ensuring that the MCMC file is in our working directory, we can use \verb|read_mcmc_file| to read it into R.
 
 ```{r, eval=FALSE}
-filename= "MCMC_example.p"
+filename= "Example/MCMC_example.p"
 results = read_mcmc_file(filename)
 ```
 
 Label switching is dealt with by using \verb|relabel_mcmc| which applies Stephen's relabelling algorithm, requiring the package \verb|label.switching|. This returns a list with relabelled $\boldsymbol{\underline{\rho}}$ and $\boldsymbol{z}$ parameters.
-
-```{r, echo=FALSE}
-load("output_example")
-```
 
 ```{r, eval = FALSE}
 results_relab = relabel_mcmc(results)
@@ -44,7 +40,7 @@ results_relab$rho %>%
                     Q95 = quantile(rho, probs = 0.95))
 ```
 
-An auxiliary function \verb|plot_rho_posterior| is also available to easily obtain trace and density plots. 
+An auxiliary function \verb|plot_rho_posterior| is also available to easily obtain the trace by chains and density plots of the combined draws. 
 
 ```{r, fig.width=8, fig.height=5, fig.align='center'}
 rho_plots = plot_rho_posterior(results_relab)
