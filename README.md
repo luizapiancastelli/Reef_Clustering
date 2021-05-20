@@ -1,6 +1,6 @@
 # Reef_Clustering: model-based clustering proportion data of reef species abundances
 
-This reposity contains code to fit the Dirichlet mixture model for clustering compositional data introduced by Piancastelli, Friel, Vercelloni, Mengersen and Mira (preprint ArXiv: ) via MCMC.
+This reposity contains code to fit the Dirichlet mixture model for clustering compositional data introduced by Piancastelli, Friel, Vercelloni, Mengersen and Mira (preprint ArXiv: https://arxiv.org/abs/2105.02140) via MCMC.
 
 ## Data sets
 
